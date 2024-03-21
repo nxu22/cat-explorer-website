@@ -22,7 +22,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email']) && isset($_PO
                 $stmt->fetch();
 
                 if (password_verify($password, $password_hash)) {
-                    header('Location: index.php');
+                    // Successful login
+                    $_SESSION['user_id'] = $user_id;
+                    $_SESSION['username'] = $username;
+                    $_SESSION['logged_in'] = true;
+                    echo "<script>
+                            alert('Sign in successful.');
+                            window.location.href='index.php';
+                          </script>";
+                    exit;
                 } else {
                     $error_message = "The password you entered was not valid.";
                 }

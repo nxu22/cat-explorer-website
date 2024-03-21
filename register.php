@@ -24,8 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Execute the query and check for errors
     if ($stmt->execute()) {
-        header('Location: signin.php');
-        exit;
+        echo "<script>
+        alert('Account created successfully. Please sign in.');
+        window.location.href='signin.php';
+      </script>";
+       exit;
     } else {
         echo "Error: " . $stmt->error;
     }
@@ -58,6 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <li><a href="signin.php">SIGN IN</a></li>
     </ul>
 </nav>
+
 <div class="signin-container">
     <h2>Create Account</h2>
     <form action="register.php" method="post">

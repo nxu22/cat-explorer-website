@@ -8,6 +8,7 @@ if (!isset($_GET['Cat-ID'])) {
     exit;
 }
 
+
 $catID = $_GET['Cat-ID'];
 
 $breedDetails = [];
@@ -67,6 +68,12 @@ $conn->close();
             <?php else: ?>
                 <p>No details found for the specified cat breed.</p>
             <?php endif; ?>
+            <!-- Edit/Delete Options Placeholder -->
+           <div id="admin-options">
+              <a href="edit-breed.php?Cat-ID=<?= $catID ?>" class="edit-btn">Edit</a>
+              <a href="delete-breed.php?Cat-ID=<?= $catID ?>" class="delete-btn">Delete</a>
+            </div>
+
         </section>
     </main>
 
