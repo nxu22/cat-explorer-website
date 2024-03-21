@@ -1,0 +1,212 @@
+
+header, nav, main, footer {
+    padding: 1em; 
+    text-align: center;
+}
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+.featured-cat {
+    margin-top: 20px;
+}
+
+
+/*
+   homepage
+*/
+#featured-cats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; 
+    gap: 20px;
+}
+
+.cat-breed-item {
+    border: 1px solid #ddd; 
+    padding: 15px;
+    border-radius: 8px; 
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1); 
+    max-width: 300px; 
+    text-align: center; 
+}
+
+.cat-breed-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px; 
+}
+
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+
+@media (max-width: 600px) {
+    #featured-cats {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+
+/*
+breed_detail page
+*/
+
+
+#breed-details {
+    border: 1px solid #ddd; 
+    padding: 20px; 
+    max-width: 800px;
+    margin: 20px auto; 
+    background-color: #f9f9f9;
+}
+
+#breed-details img {
+    width: 100%; 
+    max-width: 300px; 
+    height: auto; 
+    margin: 0 auto; 
+    display: block; 
+}
+
+#breed-details h2, #breed-details h3 {
+    color: #333; 
+    text-align: center; 
+}
+
+#breed-details p {
+    font-size: 1.2em; 
+    line-height: 1.6; 
+    color: #666; 
+    margin-bottom: 20px; 
+}
+/*
+login
+*/
+
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+    }
+    .signin-container {
+        width: 300px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .signin-container h2 {
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .form-group input[type="submit"] {
+        background-color: black;
+        color: white;
+        cursor: pointer;
+    }
+    .form-group input[type="submit"]:hover {
+        background-color: #333;
+    }
+    .links {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+
+/* admin page*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #000;
+}
+
+header {
+    background-color: #fff;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+form {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Adds padding without increasing the total width */
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #000;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #333;
+}
+
+/* Optional: Add some padding inside the body to prevent content from sticking to the edges */
+.container {
+    padding: 20px;
+}
