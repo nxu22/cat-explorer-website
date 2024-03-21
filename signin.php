@@ -25,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email']) && isset($_PO
                     // Successful login
                     $_SESSION['user_id'] = $user_id;
                     $_SESSION['username'] = $username;
+                    $_SESSION['email'] = $email;
                     $_SESSION['logged_in'] = true;
                     echo "<script>
                             alert('Sign in successful.');

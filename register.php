@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         alert('Account created successfully. Please sign in.');
         window.location.href='signin.php';
       </script>";
-       exit;
+exit;
     } else {
         echo "Error: " . $stmt->error;
     }

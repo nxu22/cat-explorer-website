@@ -1,18 +1,36 @@
 <?php
 session_start();
 require 'connect.php';
+require 'authenticate.php';
 
-define('ADMIN_LOGIN', 'wally');
-define('ADMIN_PASSWORD', 'mypass');
 
-if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])
-    || ($_SERVER['PHP_AUTH_USER'] != ADMIN_LOGIN)
-    || ($_SERVER['PHP_AUTH_PW'] != ADMIN_PASSWORD)) {
-    header('HTTP/1.1 401 Unauthorized');
-    header('WWW-Authenticate: Basic realm="Cat CMS"');
-    exit("Access Denied: Username and password required.");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $catID = $_GET['Cat-ID'];
+
+    // Perform CSRF check here if implemented
+
+    // SQL to delete the breed
+    $stmt = $conn->prepare("DELETE FROM catbreed WHERE `Cat-ID` = ?");
+    $stmt->bind_param("i", $catID);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        // Deletion was successful
+        echo "<p>Breed deleted successfully.</p>";
+        // Redirect or include logic to display an empty detail page
+    } else {
+        // Deletion failed
+        echo "<p>Could not delete breed. It may not exist or an error occurred.</p>";
+    }
+    $stmt->close();
+    $conn->close();
+    exit;
 }
-
-// Your edit or delete logic here...
-
 ?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<a href="delete-breed.php?Cat-ID=<?= $catID ?>" onclick="return confirm('Are you sure you want to delete this breed?');">Delete</a>
+</html>
