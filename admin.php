@@ -12,39 +12,40 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
-<title>Add New Cat Breed</title>
+<title>Add New Cat</title>
 </head>
 <body>
   <header>
-  <h1>Add New Cat Breed</h1>
+  <h1>Add New Cat</h1>
 </header>
   <nav>
         <ul>
             <li><a href="index.php">Home</a></li>
-            <li><a href="catalog.php">Cat Breed Catalog</a></li>
+            <li><a href="catalog.php">Cat Catalog</a></li>
             <li><a href="favorites.php">Favorites</a></li>
             <li><a href="admin.php">Admin Area</a></li>
             <li><a href="signin.php">SIGN IN</a></li>
         </ul>
     </nav>
-
   
-   <form action="add_breed.php" method="post" enctype="multipart/form-data">
+   <form action="add_cat.php" method="post" enctype="multipart/form-data">
         
-       
-        <label for="name">Breed Name:</label>
+        <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
 
-        <label for="characteristics">Characteristics:</label>
-        <textarea id="characteristics" name="characteristics" required></textarea>
-        
-        <label for="care_instructions">Care Instructions:</label>
-        <textarea id="care_instructions" name="care_instructions" required></textarea>
-        
+        <label for="size">Size:</label>
+        <input type="text" id="size" name="size" required>
+
+        <label for="breed">Breed:</label>
+        <input type="text" id="breed" name="breed" required>
+
+        <label for="hair_color">Hair Color:</label>
+        <input type="text" id="hair_color" name="hair_color" required>
+
         <label for="image_url">Image URL:</label>
-        <input type="text" id="image_url" name="image_url">
+        <input type="text" id="image_url" name="image_url" required>
         
-        <input type="submit" value="Add Breed">
+        <input type="submit" value="Add Cat">
     </form>
 
 </body>
