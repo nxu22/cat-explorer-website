@@ -26,7 +26,7 @@ nav ul li {
     gap: 20px;
 }
 
-.cat-breed-item {
+.cat-item {
     border: 1px solid #ddd; 
     padding: 15px;
     border-radius: 8px; 
@@ -35,7 +35,7 @@ nav ul li {
     text-align: center; 
 }
 
-.cat-breed-item img {
+.cat-item img {
     max-width: 100%;
     height: auto;
     border-radius: 5px; 
@@ -58,11 +58,11 @@ nav ul li {
 
 
 /*
-breed_detail page
+cat_detail page
 */
 
 
-#breed-details {
+#cat-details {
     border: 1px solid #ddd; 
     padding: 20px; 
     max-width: 800px;
@@ -70,7 +70,7 @@ breed_detail page
     background-color: #f9f9f9;
 }
 
-#breed-details img {
+#cat-details img {
     width: 100%; 
     max-width: 300px; 
     height: auto; 
@@ -78,12 +78,12 @@ breed_detail page
     display: block; 
 }
 
-#breed-details h2, #breed-details h3 {
+#cat-details h2, #cat-details h3 {
     color: #333; 
     text-align: center; 
 }
 
-#breed-details p {
+#cat-details p {
     font-size: 1.2em; 
     line-height: 1.6; 
     color: #666; 
@@ -188,8 +188,7 @@ textarea {
     margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box; /* Adds padding without increasing the total width */
-}
+    box-sizing: border-box; 
 
 input[type="submit"] {
     width: 100%;
@@ -206,7 +205,8 @@ input[type="submit"]:hover {
     background-color: #333;
 }
 
-/* Optional: Add some padding inside the body to prevent content from sticking to the edges */
+
 .container {
     padding: 20px;
+}
 }

@@ -2,26 +2,26 @@
 session_start();
 require 'connect.php'; 
 
+$cats = [];
 
-$catBreeds = [];
-
-// SQL query to fetch all data from the cat breed table
-$sql = "SELECT `Cat-ID`, `Name`, `Characteristics`, `Care_Instructions`, `Image_URL` FROM catbreed"; 
+// SQL query to fetch all data from the cat table
+$sql = "SELECT `id`, `name`, `size`, `breed`, `hair_color`, `image_url` FROM cat"; 
 $result = $conn->query($sql);
 
 // Check if there are any results
 if ($result && $result->num_rows > 0) {
     // Fetch all rows and add them to the array
     while($row = $result->fetch_assoc()) {
-        $catBreeds[] = $row;
+        $cats[] = $row;
     }
 } else {
-    $noBreedsMessage = "No cat breeds found.";
+    $noCatsMessage = "No cats found.";
 }
 
-// Don't forget to close the database connection
+
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,32 +49,30 @@ $conn->close();
     </nav>
 
     <main>
-        <section id="search">
-            <form action="search.php" method="get">
-                <input type="text" name="query" placeholder="Search cat breeds...">
-                <button type="submit">Search</button>
-            </form>
-        </section>
-
-        
-        <section id="featured-cats" class="featured-cat">
-           
-            
-            <!-- Loop through the cat breeds and display them -->
-            <?php foreach ($catBreeds as $breed): ?>
-                <div class="cat-breed-item">
-                    <?php if (!empty($breed['Image_URL'])): ?>
-                        <img src="<?= htmlspecialchars($breed['Image_URL']) ?>" alt="<?= htmlspecialchars($breed['Name']) ?>">
+    <section id="search">
+        <form action="search.php" method="get">
+            <input type="text" name="query" placeholder="Search cats...">
+            <button type="submit">Search</button>
+        </form>
+    </section>
+    
+    <section id="featured-cats" class="featured-cat">
+        <!-- Loop through the cats and display their image, name, and a 'Know Me More' button -->
+        <?php if (!empty($cats)): ?>
+            <?php foreach ($cats as $cat): ?>
+                <div class="cat-item">
+                    <?php if (!empty($cat['image_url'])): ?>
+                        <img src="<?= htmlspecialchars($cat['image_url']) ?>" alt="<?= htmlspecialchars($cat['name']) ?>" class="cat-image">
                     <?php endif; ?>
-                    <h3><?= htmlspecialchars($breed['Name']) ?></h3>
-                    <a href="breed_detail.php?Cat-ID=<?= urlencode($breed['Cat-ID']) ?>">Learn more</a>
+                    <h3><?= htmlspecialchars($cat['name']) ?></h3>
+                    <!-- 'Know Me More' button -->
+                    <a href="cat_detail.php?id=<?= urlencode($cat['id']) ?>" class="know-more-btn">Know Me More</a>
                 </div>
             <?php endforeach; ?>
-            
-            <?php if (empty($catBreeds)): ?>
-                <p><?= $noBreedsMessage ?></p>
-            <?php endif; ?>
-        </section>
+        <?php else: ?>
+            <p><?= $noCatsMessage ?></p>
+        <?php endif; ?>
+    </section>
     </main>
 
     <footer>
