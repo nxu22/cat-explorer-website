@@ -42,6 +42,12 @@
         <label for="hair_color">Hair Color:</label>
         <input type="text" id="hair_color" name="hair_color" required>
 
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+   
+        <label for="born_year">Born Year:</label>
+        <input type="number" id="born_year" name="born_year" min="1900" max="2024" required>
+
         <label for="image_url">Image URL:</label>
         <input type="text" id="image_url" name="image_url" required>
         

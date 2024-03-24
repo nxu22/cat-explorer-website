@@ -55,6 +55,22 @@ nav ul li {
         align-items: center;
     }
 }
+select {
+    width: 200px; /* Width of the dropdown */
+    height: 30px; /* Height of the dropdown */
+    margin-bottom: 10px; /* Space below the dropdown */
+    cursor: pointer; /* Changes the cursor to a pointer to indicate it's clickable */
+}
+
+/* Style changes for the dropdown when hovered */
+select:hover {
+    background-color: #f2f2f2;
+}
+
+/* Style for the dropdown options */
+select option {
+    padding: 5px; /* Padding inside each option */
+}
 
 
 /*
@@ -181,6 +197,7 @@ label {
 }
 
 input[type="text"],
+input[type="number"],
 textarea {
     width: 100%;
     padding: 8px;
@@ -188,7 +205,7 @@ textarea {
     margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box; 
+    box-sizing: border-box; }
 
 input[type="submit"] {
     width: 100%;
@@ -208,5 +225,4 @@ input[type="submit"]:hover {
 
 .container {
     padding: 20px;
-}
 }

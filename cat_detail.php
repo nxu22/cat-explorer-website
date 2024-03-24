@@ -13,9 +13,9 @@ $catID = $_GET['id'];
 $catDetails = [];
 
 // SQL query to fetch data for the specific cat
-$sql = "SELECT `id`, `name`, `size`, `breed`, `hair_color`, `image_url` FROM cat WHERE `id` = ?"; 
+$sql = "SELECT `id`, `name`, `size`, `breed`, `hair_color`, `image_url`, `age`, `born_year` FROM cat WHERE `id` = ?"; 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $catID); // "i" denotes the parameter type is integer
+$stmt->bind_param("i", $catID); 
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -63,6 +63,8 @@ $conn->close();
                 <p><strong>Size:</strong> <?= htmlspecialchars($catDetails['size']) ?></p>
                 <p><strong>Breed:</strong> <?= htmlspecialchars($catDetails['breed']) ?></p>
                 <p><strong>Hair Color:</strong> <?= htmlspecialchars($catDetails['hair_color']) ?></p>
+                <p><strong>Age:</strong> <?= htmlspecialchars($catDetails['age']) ?> years</p>
+                <p><strong>Born Year:</strong> <?= htmlspecialchars($catDetails['born_year']) ?></p>
             <?php else: ?>
                 <p>No details found for the specified cat.</p>
             <?php endif; ?>

@@ -11,13 +11,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $breed = $_POST['breed'];
     $hair_color = $_POST['hair_color'];
     $image_url = $_POST['image_url'];
+    $age = $_POST['age']; 
+    $born_year = $_POST['born_year']; 
 
     // Create a SQL query to insert cat details.
-    $sql = "INSERT INTO cat (name, size, breed, hair_color, image_url) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO cat (name, size, breed, hair_color, image_url, age, born_year) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
 
     // Prepare and bind parameters.
     if ($stmt = $conn->prepare($sql)) { 
-        $stmt->bind_param("sssss", $name, $size, $breed, $hair_color, $image_url);
+        $stmt->bind_param("sssssis", $name, $size, $breed, $hair_color, $image_url, $age, $born_year);
 
         // Execute the statement.
         if ($stmt->execute()) {

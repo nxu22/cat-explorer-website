@@ -1,26 +1,45 @@
 <?php
 session_start();
-require 'connect.php'; 
+require 'connect.php';
 
 $cats = [];
 
-// SQL query to fetch all data from the cat table
-$sql = "SELECT `id`, `name`, `size`, `breed`, `hair_color`, `image_url` FROM cat"; 
+// Valid columns to sort by
+$valid_sorts = [
+    'name_ASC' => 'name ASC',
+    'name_DESC' => 'name DESC',
+    'age_ASC' => 'age ASC',
+    'age_DESC' => 'age DESC',
+    'born_year_ASC' => 'born_year ASC',
+    'born_year_DESC' => 'born_year DESC'
+];
+
+// Check if a valid sort parameter is provided by the user
+if (isset($_GET['sort']) && array_key_exists($_GET['sort'], $valid_sorts)) {
+    // Get the corresponding ORDER BY clause from the validated sort parameter
+    $order_by_clause = $valid_sorts[$_GET['sort']];
+} else {
+    // Use a default ORDER BY clause
+    $order_by_clause = 'name ASC';
+}
+
+// SQL query to fetch all data from the cat table and sort it
+$sql = "SELECT `id`, `name`, `size`, `breed`, `hair_color`, `image_url`, `age`, `born_year` FROM cat ORDER BY {$order_by_clause}";
 $result = $conn->query($sql);
 
 // Check if there are any results
 if ($result && $result->num_rows > 0) {
     // Fetch all rows and add them to the array
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $cats[] = $row;
     }
 } else {
     $noCatsMessage = "No cats found.";
 }
 
-
 $conn->close();
 ?>
+
 
 
 <!DOCTYPE html>
@@ -56,6 +75,20 @@ $conn->close();
         </form>
     </section>
     
+    <form action="" method="get">
+    <select name="sort" onchange="this.form.submit()">
+        <option value="name_ASC" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'name_ASC') ? 'selected' : ''; ?>>Sort by Name Ascending</option>
+        <option value="name_DESC" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'name_DESC') ? 'selected' : ''; ?>>Sort by Name Descending</option>
+        <option value="age_ASC" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'age_ASC') ? 'selected' : ''; ?>>Sort by Age Ascending</option>
+        <option value="age_DESC" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'age_DESC') ? 'selected' : ''; ?>>Sort by Age Descending</option>
+        <option value="born_year_ASC" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'born_year_ASC') ? 'selected' : ''; ?>>Sort by Born Year Ascending</option>
+        <option value="born_year_DESC" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'born_year_DESC') ? 'selected' : ''; ?>>Sort by Born Year Descending</option>
+    </select>
+</form>
+
+    
+
+
     <section id="featured-cats" class="featured-cat">
         <!-- Loop through the cats and display their image, name, and a 'Know Me More' button -->
         <?php if (!empty($cats)): ?>
