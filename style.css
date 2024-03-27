@@ -226,3 +226,54 @@ input[type="submit"]:hover {
 .container {
     padding: 20px;
 }
+/* catalog*/
+
+#categorySelectionForm {
+    justify-content: center;
+ }
+
+    
+
+
+#breed_selection {
+    width: 200px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    
+}
+
+/* Section and Cat List Styles */
+section {
+    padding: 20px;
+    background: #fff;
+}
+
+section h2 {
+    text-align: center;
+}
+
+.cat-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.cat {
+    border: 1px solid #ddd;
+    padding: 10px; /* Reduce padding to decrease overall size */
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: calc(15% - 20px); /* Four items per row, or adjust percentage as needed */
+    margin-bottom: 20px;
+    text-align: center; /* Center-align text */
+    overflow: hidden; /* Ensures the content fits within the borders */
+}
+
+.cat img {
+    max-width: 100%; /* Ensure image does not overflow its container */
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 10px; /* Space between image and text below */
+}

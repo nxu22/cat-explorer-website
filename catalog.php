@@ -1,58 +1,46 @@
 <?php
-
 session_start();
-require 'connect.php';
-// Example for Create operation
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Assume proper sanitization and validation are done here
-    $name = $_POST['name'];
-    $characteristics = $_POST['characteristics'];
-    $careInstructions = $_POST['care_instructions'];
-    
-    // Database connection should be established here
-    // Assume $conn is your database connection
-
-    if (!empty($_POST['cat_id'])) {
-        // Update operation
-        $catId = $_POST['cat_id'];
-        // Prepare an update statement
-        $stmt = $conn->prepare("UPDATE categories SET Name = ?, Characteristics = ?, Care_Instructions = ? WHERE `Cat-ID` = ?");
-        $stmt->bind_param("sssi", $name, $characteristics, $careInstructions, $catId);
-        $stmt->execute();
-    } else {
-        // Create operation
-        // Prepare an insert statement
-        $stmt = $conn->prepare("INSERT INTO categories (Name, Characteristics, Care_Instructions) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $name, $characteristics, $careInstructions);
-        $stmt->execute();
+require 'connect.php'; 
+// Fetch categories for the dropdown
+$categories = array();
+$categoryQuery = "SELECT `Cat-ID`, `BreedName` FROM categories";
+$categoryResult = $conn->query($categoryQuery);
+if ($categoryResult) {
+    while ($row = $categoryResult->fetch_assoc()) {
+        $categories[] = $row;
     }
-    
-    // Close statement
-    $stmt->close();
-    
-    // Redirect or display a success message
 }
 
-// Close connection
+// Initialize an empty array for the cats
+$cats = array();
+
+// Check if a breed has been selected and fetch cats
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['breed_id']) && $_POST['breed_id'] != '') {
+    $breedId = $_POST['breed_id'];
+    $stmt = $conn->prepare("SELECT * FROM cat WHERE breed = (SELECT `BreedName` FROM categories WHERE `Cat-ID` = ?)");
+    $stmt->bind_param("i", $breedId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $cats = $result->fetch_all(MYSQLI_ASSOC);
+}
+
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cat Category Form</title>
-    <link rel="stylesheet" href="style.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cat Breed Catalog</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 <header>
-        <h1>Cat Category Form</h1>
-    </header>
-    
+  <h1>Cat Breed Catalog</h1>
+</header>
+
     <nav>
         <ul>
             <li><a href="index.php">Home</a></li>
@@ -63,24 +51,32 @@ $conn->close();
           
         </ul>
     </nav>
-  <form action="" method="post" id="catForm">
-    <!-- If you are updating an existing category, include a hidden input for the category ID -->
-    <!-- This should only be output if updating an existing category -->
-    <input type="hidden" name="cat_id" value="<?php echo isset($existingCategoryId) ? $existingCategoryId : ''; ?>">
-    Category Name: <input type="text" name="name" required>
-    Characteristics: <textarea name="characteristics" required></textarea>
-    Care Instructions: <textarea name="care_instructions" required></textarea>
-    <input type="submit" value="Submit">
-  </form>
-  
-  <select name="category_id" form="catForm">
-    <option value="">Select a Category</option>
-    <?php
-      // Assuming $categories is an array of categories from the database
-      foreach ($categories as $category) {
-        echo "<option value='" . htmlspecialchars($category['Cat-ID']) . "'>" . htmlspecialchars($category['Name']) . "</option>";
-      }
-    ?>
+
+<!-- Form for selecting a breed category -->
+<form id="categorySelectionForm" method="post">
+  <label for="breed_selection">Select a Breed Category:</label>
+  <select id="breed_selection" name="breed_id" onchange="this.form.submit()">
+    <option value="">Select a Breed</option>
+    <?php foreach ($categories as $category): ?>
+      <option value="<?php echo htmlspecialchars($category['Cat-ID']); ?>" <?php echo isset($_POST['breed_id']) && $_POST['breed_id'] == $category['Cat-ID'] ? 'selected' : ''; ?>>
+        <?php echo htmlspecialchars($category['BreedName']); ?>
+      </option>
+    <?php endforeach; ?>
   </select>
+</form>
+
+<section>
+  <h2>Cats List</h2>
+  <div class="cat-list">
+    <?php foreach ($cats as $cat): ?>
+      <div class="cat">
+        <img src="<?php echo htmlspecialchars($cat['image_url']); ?>" alt="<?php echo htmlspecialchars($cat['name']); ?>">
+        <h3><?php echo htmlspecialchars($cat['name']); ?></h3>
+        <!-- Include other details you want to show for each cat -->
+      </div>
+    <?php endforeach; ?>
+  </div>
+</section>
+
 </body>
 </html>
