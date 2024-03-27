@@ -2,6 +2,33 @@
 session_start();
 require 'connect.php';
 
+// Fetch all categories for the dropdown
+$categories = [];
+$categoryResult = $conn->query("SELECT `Cat-ID`, `BreedName` FROM categories");
+if ($categoryResult) {
+    while ($row = $categoryResult->fetch_assoc()) {
+        $categories[$row['Cat-ID']] = $row['BreedName'];
+    }
+}
+
+// Check if we're updating an existing category
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cat_id'], $_POST['new_category_name'])) {
+    $catId = $_POST['cat_id'];
+    $newCategoryName = $_POST['new_category_name'];
+    
+    // Update the category
+    $stmt = $conn->prepare("UPDATE categories SET BreedName = ? WHERE `Cat-ID` = ?");
+    $stmt->bind_param("si", $newCategoryName, $catId);
+    if ($stmt->execute()) {
+        // Update successful
+        header("Location: catalog.php"); // Redirect to avoid resubmission
+        exit();
+    } else {
+        // Update failed
+        echo "Error updating category: " . $conn->error;
+    }
+}
+
 // Category management logic
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category_name'])) {
     if (isset($_POST['cat_id'])) {
@@ -23,6 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category_name'])) {
     header("Location: catalog.php");
     exit();
 }
+
+
 
 // Catalog display logic
 
@@ -108,30 +137,30 @@ $conn->close();
 </form>
 
 <!-- Category management form for updating an existing category -->
-<form id="categoryManagementForm" method="post">
-      <!-- Dropdown to select category to edit -->
-      <label for="edit_category_id">Edit Category:</label>
-      <select id="edit_category_id" name="cat_id">
+<form id="categoryUpdateForm" method="post">
+    <label for="edit_category_id">Edit Category:</label>
+    <select id="edit_category_id" name="cat_id" onchange="loadCurrentCategoryName()">
         <option value="">Select a Category to Edit</option>
         <?php foreach ($categories as $id => $name): ?>
-          <option value="<?php echo $id; ?>"><?php echo $name; ?></option>
+            <option value="<?php echo htmlspecialchars($id); ?>"><?php echo htmlspecialchars($name); ?></option>
         <?php endforeach; ?>
-      </select>
+    </select>
 
-      <!-- Input field to update the category name -->
-      <label for="category_name">Category Name:</label>
-      <input type="text" id="category_name" name="category_name" required>
+    <label for="new_category_name">New Category Name:</label>
+    <input type="text" id="new_category_name" name="new_category_name" required>
 
-      <input type="submit" value="Update Category">
-    </form>
+    <input type="submit" value="Update Category">
+</form>
 
-    <script>
-    // JavaScript to load the category name into the input field when a category is selected
-    document.getElementById('edit_category_id').addEventListener('change', function() {
-        var catId = this.value;
-        document.getElementById('category_name').value = catId ? <?php echo json_encode($categories); ?>[catId] : '';
-    });
-    </script>
+<script>
+function loadCurrentCategoryName() {
+    var editDropdown = document.getElementById('edit_category_id');
+    var categoryNameInput = document.getElementById('new_category_name');
+    var selectedId = editDropdown.value;
+    categoryNameInput.value = selectedId ? <?php echo json_encode($categories); ?>[selectedId] : '';
+}
+</script>
+
 
 </body>
 </html>
