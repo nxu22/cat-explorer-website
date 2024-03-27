@@ -1,7 +1,31 @@
 <?php
 session_start();
-require 'connect.php'; 
-// Fetch categories for the dropdown
+require 'connect.php';
+
+// Category management logic
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category_name'])) {
+    if (isset($_POST['cat_id'])) {
+        // Update existing category
+        $catId = $_POST['cat_id'];
+        $categoryName = $_POST['category_name'];
+        $updateStmt = $conn->prepare("UPDATE categories SET BreedName = ? WHERE `Cat-ID` = ?");
+        $updateStmt->bind_param("si", $categoryName, $catId);
+        $updateStmt->execute();
+        $updateStmt->close();
+    } else {
+        // Create new category
+        $categoryName = $_POST['category_name'];
+        $insertStmt = $conn->prepare("INSERT INTO categories (BreedName) VALUES (?)");
+        $insertStmt->bind_param("s", $categoryName);
+        $insertStmt->execute();
+        $insertStmt->close();
+    }
+    header("Location: catalog.php");
+    exit();
+}
+
+// Catalog display logic
+
 $categories = array();
 $categoryQuery = "SELECT `Cat-ID`, `BreedName` FROM categories";
 $categoryResult = $conn->query($categoryQuery);
@@ -11,10 +35,7 @@ if ($categoryResult) {
     }
 }
 
-// Initialize an empty array for the cats
 $cats = array();
-
-// Check if a breed has been selected and fetch cats
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['breed_id']) && $_POST['breed_id'] != '') {
     $breedId = $_POST['breed_id'];
     $stmt = $conn->prepare("SELECT * FROM cat WHERE breed = (SELECT `BreedName` FROM categories WHERE `Cat-ID` = ?)");
@@ -22,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['breed_id']) && $_POST
     $stmt->execute();
     $result = $stmt->get_result();
     $cats = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
 }
 
 $conn->close();
@@ -78,16 +100,38 @@ $conn->close();
   </div>
 </section>
 
-<!-- Category management form -->
-<form id="categoryManagementForm" method="post" action="category_management.php">
+<!-- Category management form for creating a new category -->
+<form id="categoryManagementForm" method="post">
   <label for="category_name">Category Name:</label>
   <input type="text" id="category_name" name="category_name" required>
-
-  <!-- Include this hidden input only if you are updating a category -->
-  <!-- <input type="hidden" name="cat_id" value="<?php echo $existingCatId; ?>"> -->
-
-  <input type="submit" value="Create/Update Category">
+  <input type="submit" value="Create Category">
 </form>
+
+<!-- Category management form for updating an existing category -->
+<form id="categoryManagementForm" method="post">
+      <!-- Dropdown to select category to edit -->
+      <label for="edit_category_id">Edit Category:</label>
+      <select id="edit_category_id" name="cat_id">
+        <option value="">Select a Category to Edit</option>
+        <?php foreach ($categories as $id => $name): ?>
+          <option value="<?php echo $id; ?>"><?php echo $name; ?></option>
+        <?php endforeach; ?>
+      </select>
+
+      <!-- Input field to update the category name -->
+      <label for="category_name">Category Name:</label>
+      <input type="text" id="category_name" name="category_name" required>
+
+      <input type="submit" value="Update Category">
+    </form>
+
+    <script>
+    // JavaScript to load the category name into the input field when a category is selected
+    document.getElementById('edit_category_id').addEventListener('change', function() {
+        var catId = this.value;
+        document.getElementById('category_name').value = catId ? <?php echo json_encode($categories); ?>[catId] : '';
+    });
+    </script>
 
 </body>
 </html>
