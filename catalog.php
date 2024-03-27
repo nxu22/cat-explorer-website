@@ -78,5 +78,16 @@ $conn->close();
   </div>
 </section>
 
+<!-- Category management form -->
+<form id="categoryManagementForm" method="post" action="category_management.php">
+  <label for="category_name">Category Name:</label>
+  <input type="text" id="category_name" name="category_name" required>
+
+  <!-- Include this hidden input only if you are updating a category -->
+  <!-- <input type="hidden" name="cat_id" value="<?php echo $existingCatId; ?>"> -->
+
+  <input type="submit" value="Create/Update Category">
+</form>
+
 </body>
 </html>

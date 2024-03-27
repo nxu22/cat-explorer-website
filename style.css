@@ -266,7 +266,7 @@ section h2 {
     border-radius: 8px;
     background: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: calc(15% - 20px); /* Four items per row, or adjust percentage as needed */
+    width: calc(10% - 20px); /* Four items per row, or adjust percentage as needed */
     margin-bottom: 20px;
     text-align: center; /* Center-align text */
     overflow: hidden; /* Ensures the content fits within the borders */
