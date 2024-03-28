@@ -266,7 +266,7 @@ section h2 {
     border-radius: 8px;
     background: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: calc(10% - 20px); /* Four items per row, or adjust percentage as needed */
+    width: calc(35% - 20px); /* Four items per row, or adjust percentage as needed */
     margin-bottom: 20px;
     text-align: center; /* Center-align text */
     overflow: hidden; /* Ensures the content fits within the borders */
@@ -277,3 +277,25 @@ section h2 {
     height: auto; /* Maintain aspect ratio */
     margin-bottom: 10px; /* Space between image and text below */
 }
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* vertically center the items in the container */
+    height: 100vh;
+  }
+  .left,
+  .right {
+    display: flex; /* make both columns also flex containers */
+    flex-direction: column; /* stack their children vertically */
+    justify-content: center; /* center the children vertically */
+    align-items: center; /* center the children horizontally */
+  }
+  .left {
+    flex: 1; /* Adjust the value to change the space allocated to the left column */
+    
+  }
+
+  .right {
+    flex: 2; /* Adjust the value to change the space allocated to the right column */
+    
+  }
