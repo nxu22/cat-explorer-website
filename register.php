@@ -8,37 +8,46 @@ error_reporting(E_ALL);
 // Include the database connection
 include 'connect.php';
 
+// Initialize a variable for error messages
+$error_message = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve and sanitize the input values
     $username = trim($_POST['username']);
-    $password = trim($_POST['password']);;
+    $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']); // Add this line to get the confirmed password
     $email = strtolower(trim($_POST['email'])); 
 
-    
-    // Hash the password
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-    // Prepare an insert statement
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $username, $email, $password_hash);
-    
-    // Execute the query and check for errors
-    if ($stmt->execute()) {
-        echo "<script>
-        alert('Account created successfully. Please sign in.');
-        window.location.href='signin.php';
-      </script>";
-exit;
+    // Check if the two passwords match
+    if ($password !== $confirm_password) {
+        // If passwords do not match, store an error message
+        $error_message = 'The passwords do not match. Please try again.';
     } else {
-        echo "Error: " . $stmt->error;
+        // Hash the password if passwords do match
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        // Prepare an insert statement
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $username, $email, $password_hash);
+        
+        // Execute the query and check for errors
+        if ($stmt->execute()) {
+            echo "<script>
+            alert('Account created successfully. Please sign in.');
+            window.location.href='signin.php';
+          </script>";
+            exit;
+        } else {
+            $error_message = "Error: " . $stmt->error;
+        }
+        
+        // Close statement and connection
+        $stmt->close();
     }
-    
-    // Close statement and connection
-    $stmt->close();
     $conn->close();
 }
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +85,10 @@ exit;
         <div class="form-group">
             <label for="password">Password (8-20 characters)</label>
             <input type="password" id="password" name="password" required minlength="8" maxlength="20">
-            <span id="togglePassword" style="cursor: pointer;">👁️</span>
+       </div>
+       <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required minlength="8" maxlength="20">
         </div>
 
         <div class="form-group">
@@ -85,15 +97,18 @@ exit;
     </form>
 </div>
 </body>
-</html>
 <script>
-// JavaScript function to toggle password visibility
-document.getElementById('togglePassword').addEventListener('click', function (e) {
-    const passwordInput = document.getElementById('password');
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
+// JavaScript function to check password match before submitting the form
+document.querySelector('form').addEventListener('submit', function (e) {
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirm_password').value;
     
-    // toggle the eye / eye slash icon
-    this.textContent = this.textContent === '👁️' ? '🚫' : '👁️';
+    if (password !== confirmPassword) {
+        alert('Passwords do not match. Please try again.');
+        e.preventDefault(); // Prevent the form from submitting
+        return false;
+    }
 });
 </script>
+</html>
+

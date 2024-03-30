@@ -1,6 +1,8 @@
 <?php
 session_start();
 require 'connect.php';
+require 'authenticate.php';
+
 
 // Fetch all categories for the dropdown
 $categories = [];

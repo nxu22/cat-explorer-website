@@ -1,11 +1,17 @@
 <?php
-
     session_start();
     require 'authenticate.php';
     require 'connect.php';
 
+    // Fetch all user data into the $users array for displaying in the forms
+    $query = "SELECT user_id, username, password_hash, email FROM users";
+    $result = $conn->query($query);
+    if ($result) {
+        $users = $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        $users = []; // Set to an empty array if the query fails
+    }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,6 +38,9 @@
     </ul>
     </nav>
   
+
+    <section>
+    <h2>Add New Cat</h2>
    <form action="add_cat.php" method="post" enctype="multipart/form-data">
         
         <label for="name">Name:</label>
@@ -57,6 +66,39 @@
         
         <input type="submit" value="Add Cat">
     </form>
+    </section>
+    <section>
+    <h2>User Management</h2>
+     <form method="post" action="user_management.php">
+        <h3>Create User</h3>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <input type="submit" name="create_user" value="Create User">
+    </form>
 
+   <h3>Update User</h3>
+     <form method="post" action="user_management.php"> <!-- Points to a script where you handle user editing -->
+        <select name="user_id" onchange="this.form.submit()">
+        <option value="">Select a user...</option>
+        <?php foreach ($users as $user): ?>
+            <option value="<?php echo $user['user_id']; ?>"><?php echo htmlspecialchars($user['username']); ?></option>
+        <?php endforeach; ?>
+       </select>
+    </form>
+
+    <!-- Delete User Section -->
+    <h3>Delete User</h3>
+    <form method="post" action="user_management.php">
+    <select name="user_id" onchange="return confirm('Are you sure you want to delete this user?') && this.form.submit();">
+        <option value="">Select a user...</option>
+        <?php foreach ($users as $user): ?>
+            <option value="<?php echo $user['user_id']; ?>"><?php echo htmlspecialchars($user['username']); ?></option>
+        <?php endforeach; ?>
+    </select>
+    <input type="submit" name="delete_user" value="Delete" hidden>
+    </form>
+    </section>
 </body>
 </html>
