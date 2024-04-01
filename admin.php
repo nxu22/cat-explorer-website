@@ -78,27 +78,134 @@
         <input type="submit" name="create_user" value="Create User">
     </form>
 
-   <h3>Update User</h3>
-     <form method="post" action="user_management.php"> <!-- Points to a script where you handle user editing -->
-        <select name="user_id" onchange="this.form.submit()">
+    <h3>Update User</h3>
+<form id="updateUserForm">
+    <select id="userSelect" onchange="getUserDetails()">
         <option value="">Select a user...</option>
         <?php foreach ($users as $user): ?>
-            <option value="<?php echo $user['user_id']; ?>"><?php echo htmlspecialchars($user['username']); ?></option>
+            <option value="<?php echo $user['user_id']; ?>">
+                <?php echo htmlspecialchars($user['username']); ?>
+            </option>
         <?php endforeach; ?>
-       </select>
+    </select>
+</form>
+
+<!-- This section will be populated with user details once a user is selected -->
+<div id="userDetails" style="display:none;">
+    <form method="post" action="user_management.php">
+        <input type="hidden" id="edit_user_id" name="user_id">
+        
+        <label for="edit_username">Username:</label>
+        <input type="text" id="edit_username" name="username" required>
+
+        <label for="edit_email">Email:</label>
+        <input type="email" id="edit_email" name="email" required>
+        
+        <label for="edit_password">Password (change to new password):</label>
+        <input type="password" id="edit_password" name="password">
+        
+        <input type="submit" name="update_user" value="Update User">
     </form>
+</div>
 
     <!-- Delete User Section -->
     <h3>Delete User</h3>
-    <form method="post" action="user_management.php">
-    <select name="user_id" onchange="return confirm('Are you sure you want to delete this user?') && this.form.submit();">
+    <form id="deleteUserForm" method="post">
+    <select id="deleteUserSelect" name="user_id">
         <option value="">Select a user...</option>
         <?php foreach ($users as $user): ?>
             <option value="<?php echo $user['user_id']; ?>"><?php echo htmlspecialchars($user['username']); ?></option>
         <?php endforeach; ?>
     </select>
-    <input type="submit" name="delete_user" value="Delete" hidden>
+    <input type="button" id="deleteButton" value="Delete">
     </form>
+
     </section>
 </body>
+
+
+
+<script>//create user
+function getUserDetails() {
+    const userId = document.getElementById('userSelect').value;
+    const userDetailsDiv = document.getElementById('userDetails');
+
+    // Hide the details form if the default option is selected
+    if (!userId) {
+        userDetailsDiv.style.display = 'none';
+        return;
+    }
+
+    // Using URLSearchParams to encode the data for the POST request
+    const formData = new URLSearchParams();
+    formData.append('fetch_user_details', 'true');
+    formData.append('user_id', userId);
+
+    fetch('user_management.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        return response.json(); // Assuming the response is JSON
+    })
+    .then(data => {
+        // Populate the form fields with the data received
+        document.getElementById('edit_username').value = data.username;
+        document.getElementById('edit_email').value = data.email;
+        // Set the user ID to a hidden field in the form
+        document.getElementById('edit_user_id').value = userId;
+        // Show the user details form
+        userDetailsDiv.style.display = 'block';
+    })
+    .catch(error => {
+        // Handle error here, e.g., user not found or server error
+        userDetailsDiv.style.display = 'none';
+        console.error('Error:', error);
+    });
+}
+
+</script>
+
+
+
+
+
+<script>//delete user
+document.getElementById('deleteButton').addEventListener('click', function() {
+    var select = document.getElementById('deleteUserSelect');
+    var userId = select.value;
+    if (userId && confirm('Are you sure you want to delete this user?')) {
+        fetch('user_management.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'delete_user=true&user_id=' + encodeURIComponent(userId)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('Server returned an error');
+            }
+        })
+        .then(text => {
+            alert('User deleted successfully.');
+            // Optionally, remove the user from the select list
+            select.querySelector(`option[value="${userId}"]`).remove();
+            // Other UI updates or redirect logic here
+        })
+        .catch(error => {
+            alert('There was an error deleting the user.');
+            console.error('Error:', error);
+        });
+    }
+});
+
+</script>
+
 </html>
