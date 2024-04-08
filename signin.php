@@ -60,13 +60,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email']) && isset($_PO
   <h1>Welcome To Cat Explorer</h1>
 </header>
     <nav>
-        <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="catalog.php">Cat Breed Catalog</a></li>
-            <li><a href="favorites.php">Favorites</a></li>
-            <li><a href="admin.php">Admin Area</a></li>
+    <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="catalog.php">Cat Breed Catalog</a></li>
+        <li><a href="favorites.php">Favorites</a></li>
+        <li><a href="admin.php">Admin Area</a></li>
+        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
+            <li><a href="signout.php">SIGN OUT</a></li>
+        <?php else: ?>
             <li><a href="signin.php">SIGN IN</a></li>
-        </ul>
+        <?php endif; ?>
+    </ul>
     </nav>
 <!-- Display error message if any -->
 <?php

@@ -89,27 +89,29 @@ $conn->close();
     </select>
 </form>
 
-    
+<section id="featured-cats" class="featured-cat">
+    <?php if (!empty($cats)): ?>
+        <?php foreach ($cats as $cat): ?>
+            <div class="cat-item">
+                <?php if (!empty($cat['image_url'])): ?>
+                    <img src="<?= htmlspecialchars($cat['image_url']) ?>" alt="<?= htmlspecialchars($cat['name']) ?>" class="cat-image">
+                <?php endif; ?>
+                <h3><?= htmlspecialchars($cat['name']) ?></h3>
+                <p>Size: <?= htmlspecialchars($cat['size']) ?></p>
+                <p>Breed: <?= htmlspecialchars($cat['breed']) ?></p>
+                <p>Hair Color: <?= htmlspecialchars($cat['hair_color']) ?></p>
+                <p>Age: <?= htmlspecialchars($cat['age']) ?> years</p>
+                <p>Born Year: <?= htmlspecialchars($cat['born_year']) ?></p>
+                <!-- 'Know Me More' button -->
+                <a href="cat_detail.php?id=<?= urlencode($cat['id']) ?>" class="know-more-btn">Know Me More</a>
 
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p><?= $noCatsMessage ?></p>
+    <?php endif; ?>
+</section>
 
-    <section id="featured-cats" class="featured-cat">
-        <!-- Loop through the cats and display their image, name, and a 'Know Me More' button -->
-        <?php if (!empty($cats)): ?>
-            <?php foreach ($cats as $cat): ?>
-                <div class="cat-item">
-                    <?php if (!empty($cat['image_url'])): ?>
-                        <img src="<?= htmlspecialchars($cat['image_url']) ?>" alt="<?= htmlspecialchars($cat['name']) ?>" class="cat-image">
-                    <?php endif; ?>
-                    <h3><?= htmlspecialchars($cat['name']) ?></h3>
-                    <!-- 'Know Me More' button -->
-                    <a href="cat_detail.php?id=<?= urlencode($cat['id']) ?>" class="know-more-btn">Know Me More</a>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p><?= $noCatsMessage ?></p>
-        <?php endif; ?>
-    </section>
-    </main>
 
     <footer>
         <p>&copy; 2024 Cat Explorer CMS. All rights reserved.</p>

@@ -105,6 +105,64 @@ cat_detail page
     color: #666; 
     margin-bottom: 20px; 
 }
+.comments-list {
+    border: 1px solid #ccc; /* Adjust color as needed */
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9; /* Light grey background */
+    border-radius: 5px; /* Optional: rounded corners */
+}
+
+/* Add styles for the CAPTCHA image */
+#captcha-container {
+  margin-top: 20px; /* Adjust the margin as needed */
+  text-align: center; /* Center the captcha */
+}
+
+#captcha-container img {
+  border: 2px solid #ddd; /* Add a border to the captcha image */
+  border-radius: 4px; /* Optional: round the corners */
+  padding: 10px; /* Optional: add some padding */
+  width: 150px; /* Adjust the width as needed */
+  height: auto; /* Keep the aspect ratio */
+}
+
+#captcha-container input[type="text"] {
+  margin-top: 10px; /* Space between the captcha image and input field */
+  width: 150px; /* Match the width of the captcha image */
+}
+
+.notification-box {
+    background-color: #464444; /* Red */
+    color: white;
+    padding: 16px;
+    margin: 20px 0;
+    clear: both;
+    text-align: center;
+    border-radius: 4px;
+  }
+  
+  /* For the blue button similar to your image */
+  .blue-button {
+    background-color: #007bff; /* Blue */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .blue-button:hover {
+    background-color: #0056b3; /* Darker blue */
+    color: white;
+  }
+  
 /*
 login
 */

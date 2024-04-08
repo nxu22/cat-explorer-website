@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cat_id'], $_POST['new
     }
 }
 
+
 // Category management logic
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category_name'])) {
     if (isset($_POST['cat_id'])) {

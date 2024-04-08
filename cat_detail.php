@@ -2,6 +2,11 @@
 session_start();
 require 'connect.php'; 
 
+date_default_timezone_set('America/Winnipeg');
+$error_message = '';
+$preserved_user_name = '';
+$preserved_comment_text = '';
+
 // Check if the cat ID is present in the URL
 if (!isset($_GET['id'])) {
     echo "No cat specified.";
@@ -9,13 +14,13 @@ if (!isset($_GET['id'])) {
 }
 
 $catID = $_GET['id'];
-
 $catDetails = [];
+$comments = [];
 
 // SQL query to fetch data for the specific cat
 $sql = "SELECT `id`, `name`, `size`, `breed`, `hair_color`, `image_url`, `age`, `born_year` FROM cat WHERE `id` = ?"; 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $catID); 
+$stmt->bind_param("i", $catID);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -27,6 +32,64 @@ if ($result && $result->num_rows > 0) {
     exit;
 }
 
+// Handle comment submission and CAPTCHA validation
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'], $_POST['captcha'])) {
+    $user_name = filter_input(INPUT_POST, 'user_name', FILTER_SANITIZE_STRING);
+    $comment_text = filter_input(INPUT_POST, 'comment', FILTER_SANITIZE_STRING);
+    $user_captcha = filter_input(INPUT_POST, 'captcha', FILTER_SANITIZE_STRING);
+
+     
+    // Check if the CAPTCHA is correct
+    if (isset($_SESSION['captcha']) && $_SESSION['captcha'] == $user_captcha) {
+        // CAPTCHA is correct, insert the comment
+        $timestamp = date('Y-m-d H:i:s');
+        $comment_stmt = $conn->prepare("INSERT INTO comments (cat_id, user_name, comment_text, timestamp) VALUES (?, ?, ?, ?)");
+        $comment_stmt->bind_param("isss", $catID, $user_name, $comment_text, $timestamp);
+        $comment_stmt->execute();
+        $comment_stmt->close();
+        
+        // Redirect to prevent form resubmission
+        header("Location: cat_detail.php?id=$catID");
+        exit;
+    } else {
+        // CAPTCHA is incorrect, set an error message
+        $error_message = "CAPTCHA is incorrect. Please try again.";
+        
+        // Preserving the user input
+        $preserved_user_name = $user_name;
+        $preserved_comment_text = $comment_text;
+    }
+    
+    // Unset the CAPTCHA session after checking to avoid reuse
+    unset($_SESSION['captcha']);
+    
+    // Store the error message and preserved user input in the session to display after redirect
+    $_SESSION['error_message'] = $error_message;
+    $_SESSION['preserved_user_name'] = $preserved_user_name;
+    $_SESSION['preserved_comment_text'] = $preserved_comment_text;
+
+    // Redirect back to the form with preserved inputs and error message
+    header("Location: cat_detail.php?id=$catID");
+    exit;
+}
+
+// Retrieve any error message or preserved user input after the redirect
+if (isset($_SESSION['error_message'])) {
+    $error_message = $_SESSION['error_message'];
+    $preserved_user_name = $_SESSION['preserved_user_name'];
+    $preserved_comment_text = $_SESSION['preserved_comment_text'];
+    // Clear them from the session
+    unset($_SESSION['error_message'], $_SESSION['preserved_user_name'], $_SESSION['preserved_comment_text']);
+}
+
+// Comments retrieval
+$comments_stmt = $conn->prepare("SELECT user_name, comment_text, timestamp FROM comments WHERE cat_id = ? ORDER BY timestamp DESC");
+$comments_stmt->bind_param("i", $catID);
+$comments_stmt->execute();
+$comments_result = $comments_stmt->get_result();
+while ($row = $comments_result->fetch_assoc()) {
+    $comments[] = $row;
+}
 $stmt->close();
 $conn->close();
 ?>
@@ -76,6 +139,41 @@ $conn->close();
               <a href="delete-cat.php?id=<?= $catID ?>" class="delete-btn">Delete</a>
             </div>
         </section>
+
+        <section id="comments">
+            <h3>Comments</h3>
+            <form action="cat_detail.php?id=<?= htmlspecialchars($catID) ?>" method="post">
+            <input type="text" name="user_name" placeholder="Your name" value="<?= htmlspecialchars($preserved_user_name) ?>">
+                <textarea name="comment" placeholder="Write a comment..." required><?= htmlspecialchars($preserved_comment_text) ?></textarea>
+                <div id="captcha-container">
+                    <img src="captcha.php" alt="CAPTCHA Image">
+                    <input type="text" name="captcha" placeholder="Enter CAPTCHA" required>
+                    <!-- Display an error message if it's set -->
+                   <?php if (!empty($error_message)): ?>
+                   <div class="notification-box">
+                    <?php echo htmlspecialchars($error_message); ?>
+                    </div>
+                    <?php endif; ?>    
+                </div>
+                <button type="submit">Post Comment</button>
+            </form>
+       
+
+        <div class="comments-list">
+        <?php foreach ($comments as $comment): ?>
+        <article class="comment">
+            <header>
+                <h4>Name: <?= htmlspecialchars($comment['user_name']) ?></h4>
+                <p>Comment: <?= htmlspecialchars($comment['comment_text']) ?></p>
+                <time datetime="<?= htmlspecialchars($comment['timestamp']) ?>"><?= htmlspecialchars($comment['timestamp']) ?></time>
+                
+            </header>
+        </article>
+        <?php endforeach; ?>
+        </div>
+        
+
+    </section>
     </main>
 
     <footer>

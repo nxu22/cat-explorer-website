@@ -41,7 +41,7 @@
 
     <section>
     <h2>Add New Cat</h2>
-   <form action="add_cat.php" method="post" enctype="multipart/form-data">
+    <form action="add_cat.php" method="post" enctype="multipart/form-data">
         
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
@@ -60,13 +60,19 @@
    
         <label for="born_year">Born Year:</label>
         <input type="number" id="born_year" name="born_year" min="1900" max="2024" required>
-
-        <label for="image_url">Image URL:</label>
-        <input type="text" id="image_url" name="image_url" required>
         
+        <!-- Keep the image URL input if you still want users to have the option to link an image -->
+        <label for="image_url">Image URL (optional):</label>
+        <input type="text" id="image_url" name="image_url">
+
+        <!-- Add a file input field for users to upload an image from their computer -->
+        <label for="cat_image">Upload Image (optional):</label>
+        <input type="file" id="cat_image" name="cat_image">
+
         <input type="submit" value="Add Cat">
     </form>
-    </section>
+</section>
+
     <section>
     <h2>User Management</h2>
      <form method="post" action="user_management.php">
