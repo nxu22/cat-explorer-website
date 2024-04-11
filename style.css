@@ -284,6 +284,28 @@ input[type="submit"]:hover {
 .container {
     padding: 20px;
 }
+
+.section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* This centers the table horizontally */
+    
+    margin-bottom: 100px; /* Adds some space between the sections */
+}
+
+table {
+    width: auto; /* Or set to a specific width like '80%' if you want it to be narrower */
+    margin-top: 20px; /* Space above the table */
+}
+
+
+h2 {
+    text-align: center; /* This will center the h2 element text */
+}
+h3 {
+    text-align: center; /* This will center the h2 element text */
+}
+
 /* catalog*/
 
 #categorySelectionForm {

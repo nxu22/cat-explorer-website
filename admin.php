@@ -3,6 +3,22 @@
     require 'authenticate.php';
     require 'connect.php';
 
+  // Function to fetch all user data and return it as an array for displaying in the forms
+  function fetchUsers($conn) {
+    // You have already written the query, so we will not duplicate it here.
+    $query = "SELECT user_id, username, email FROM users"; // Simplified to match the function's output
+    $result = $conn->query($query);
+    if ($result && $result->num_rows > 0) {
+        // Fetch all results and return them
+        return $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        // Return an empty array if the query fails or no results
+        return [];
+    }
+}
+
+// Call the function and store the result in $users
+$users = fetchUsers($conn);
     // Fetch all user data into the $users array for displaying in the forms
     $query = "SELECT user_id, username, password_hash, email FROM users";
     $result = $conn->query($query);
@@ -72,8 +88,28 @@
         <input type="submit" value="Add Cat">
     </form>
 </section>
+<!-- New section for displaying users -->
+<div class="section" id="user-list">
+    <h2>Registered Users</h2>
+    <?php 
+    $userResult = fetchUsers($conn);
+    if ($userResult): ?>
+        <table>
+            <tr><th>User ID</th><th>Username</th><th>Email</th></tr>
+            <?php foreach ($userResult as $user): ?>
+                <tr>
+                    <td><?= htmlspecialchars($user['user_id']); ?></td>
+                    <td><?= htmlspecialchars($user['username']); ?></td>
+                    <td><?= htmlspecialchars($user['email']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php else: ?>
+        <p>No registered users.</p>
+    <?php endif; ?>
+</div>
 
-    <section>
+
     <h2>User Management</h2>
      <form method="post" action="user_management.php">
         <h3>Create User</h3>
@@ -85,7 +121,8 @@
     </form>
 
     <h3>Update User</h3>
-<form id="updateUserForm">
+    <form id="updateUserForm">
+   
     <select id="userSelect" onchange="getUserDetails()">
         <option value="">Select a user...</option>
         <?php foreach ($users as $user): ?>
@@ -94,10 +131,10 @@
             </option>
         <?php endforeach; ?>
     </select>
-</form>
+    </form>
 
-<!-- This section will be populated with user details once a user is selected -->
-<div id="userDetails" style="display:none;">
+    <!-- This section will be populated with user details once a user is selected -->
+    <div id="userDetails" style="display:none;">
     <form method="post" action="user_management.php">
         <input type="hidden" id="edit_user_id" name="user_id">
         
@@ -112,7 +149,7 @@
         
         <input type="submit" name="update_user" value="Update User">
     </form>
-</div>
+   </div>
 
     <!-- Delete User Section -->
     <h3>Delete User</h3>
@@ -125,8 +162,8 @@
     </select>
     <input type="button" id="deleteButton" value="Delete">
     </form>
-
     </section>
+    
 </body>
 
 
