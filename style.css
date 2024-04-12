@@ -78,6 +78,7 @@ cat_detail page
 */
 
 
+
 #cat-details {
     border: 1px solid #ddd; 
     padding: 20px; 
@@ -144,7 +145,7 @@ cat_detail page
   
   /* For the blue button similar to your image */
   .blue-button {
-    background-color: #007bff; /* Blue */
+    background-color: #171819; /* Blue */
     border: none;
     color: white;
     padding: 10px 20px;
@@ -159,10 +160,12 @@ cat_detail page
   }
   
   .blue-button:hover {
-    background-color: #0056b3; /* Darker blue */
+    background-color: #494b4d; /* Darker blue */
     color: white;
   }
   
+
+ 
 /*
 login
 */

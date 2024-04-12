@@ -2,6 +2,10 @@
 session_start();
 require 'connect.php'; 
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 date_default_timezone_set('America/Winnipeg');
 $error_message = '';
 $preserved_user_name = '';
@@ -90,6 +94,23 @@ $comments_result = $comments_stmt->get_result();
 while ($row = $comments_result->fetch_assoc()) {
     $comments[] = $row;
 }
+
+// Place this before any HTML where you need to display comments
+$query = "SELECT * FROM comments WHERE cat_id = ?"; // Replace with your conditions
+$stmt = $conn->prepare($query);
+$stmt->bind_param('i', $catID); // Bind the $catID variable to the parameter
+$stmt->execute();
+$result = $stmt->get_result();
+
+$comments = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $comments[] = $row;
+    }
+} else {
+    echo "No comments found for this cat.";
+}
+
 $stmt->close();
 $conn->close();
 ?>
@@ -159,19 +180,28 @@ $conn->close();
             </form>
        
 
-        <div class="comments-list">
-        <?php foreach ($comments as $comment): ?>
-        <article class="comment">
-            <header>
-                <h4>Name: <?= htmlspecialchars($comment['user_name']) ?></h4>
-                <p>Comment: <?= htmlspecialchars($comment['comment_text']) ?></p>
-                <time datetime="<?= htmlspecialchars($comment['timestamp']) ?>"><?= htmlspecialchars($comment['timestamp']) ?></time>
-                
-            </header>
-        </article>
-        <?php endforeach; ?>
-        </div>
-        
+            <div class="comments-list">
+    <?php foreach ($comments as $comment): ?>
+    <article class="comment">
+        <header>
+            <h4>Name: <?= htmlspecialchars($comment['user_name']) ?></h4>
+            <p>Comment: <?= htmlspecialchars($comment['comment_text']) ?></p>
+            <time datetime="<?= htmlspecialchars($comment['timestamp']) ?>"><?= htmlspecialchars($comment['timestamp']) ?></time>
+        </header>
+        <form action="delete_comment.php" method="post">
+    <?php if (isset($comment['comment_id'])): ?>
+        <input type="hidden" name="comment_id" value="<?php echo htmlspecialchars($comment['comment_id']); ?>">
+        <button type="submit" name="delete" value="delete">Delete</button>
+    <?php else: ?>
+        <!-- Handle the case where $comment['comment_id'] is not set -->
+        <!-- This could be an error message or a hidden input with a default value -->
+        <p>Error: No comment ID found.</p>
+    <?php endif; ?>
+</form>
+
+    </article>
+    <?php endforeach; ?>
+</div>
 
     </section>
     </main>
@@ -182,5 +212,3 @@ $conn->close();
 
 </body>
 </html>
-
-           
