@@ -21,6 +21,7 @@ $catID = $_GET['id'];
 $catDetails = [];
 $comments = [];
 
+
 // SQL query to fetch data for the specific cat
 $sql = "SELECT `id`, `name`, `size`, `breed`, `hair_color`, `image_url`, `age`, `born_year` FROM cat WHERE `id` = ?"; 
 $stmt = $conn->prepare($sql);
