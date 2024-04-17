@@ -1,6 +1,6 @@
 <?php
-session_start();
-require 'connect.php'; // This will set up the $conn variable with the database connection
+
+require 'connect.php'; // This sets up the $conn variable with the database connection
 
 // Handle create user operation
 if (isset($_POST['create_user'])) {
@@ -36,33 +36,33 @@ if (isset($_POST['fetch_user_details'])) {
 
 // Handle update user operation
 if (isset($_POST['update_user'])) {
-    $userId = $_POST['user_id'];
-    $username = $_POST['username'];
+    $userID = $_POST['user_id'];
     $email = $_POST['email'];
-    // Check if a new password has been provided
-    $updatePassword = !empty($_POST['password']);
-    
-    if ($updatePassword) {
-        $password = $_POST['password'];
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("UPDATE users SET username = ?, password_hash = ?, email = ? WHERE user_id = ?");
-        $stmt->bind_param("sssi", $username, $passwordHash, $email, $userId);
+    $password = $_POST['password'];
+    $username = $_POST['username']; // Renamed from $profileName for consistency
+
+    if (empty($password)) {
+        $stmt = $conn->prepare("SELECT password_hash FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $existingPassword = $result->fetch_assoc()['password_hash'];
+        $hashedPassword = $existingPassword;
     } else {
-        // If no new password was provided, don't update the password column
-        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ? WHERE user_id = ?");
-        $stmt->bind_param("ssi", $username, $email, $userId);
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     }
-    
+
+    $stmt = $conn->prepare("UPDATE users SET email = ?, password_hash = ?, username = ? WHERE user_id = ?");
+    $stmt->bind_param("sssi", $email, $hashedPassword, $username, $userID);
     if ($stmt->execute()) {
         $_SESSION['message'] = "User updated successfully";
     } else {
-        $_SESSION['error'] = "Error: " . $stmt->error;
+        $_SESSION['error'] = "Error updating user: " . $stmt->error;
     }
     $stmt->close();
     header("Location: admin.php");
     exit;
 }
-
 
 // Handle delete user operation
 if (isset($_POST['delete_user']) && isset($_POST['user_id'])) {
@@ -78,3 +78,4 @@ if (isset($_POST['delete_user']) && isset($_POST['user_id'])) {
     header("Location: admin.php");
     exit;
 }
+?>

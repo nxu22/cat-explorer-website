@@ -1,18 +1,19 @@
 <?php
-session_start();
+
 require 'authenticate.php'; 
 require 'connect.php'; 
 
 // Check if the form is submitted.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Capture form data.
-    $name = $_POST['name'];
-    $size = $_POST['size'];
-    $breed = $_POST['breed'];
-    $hair_color = $_POST['hair_color'];
-    $age = $_POST['age']; 
-    $born_year = $_POST['born_year']; 
-    $imagePath = '';  // Default to empty if no image is provided
+    
+    $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    $size = filter_input(INPUT_POST, 'size', FILTER_SANITIZE_STRING);
+    $breed = filter_input(INPUT_POST, 'breed', FILTER_SANITIZE_STRING);
+    $hair_color = filter_input(INPUT_POST, 'hair_color', FILTER_SANITIZE_STRING);
+    $age = filter_input(INPUT_POST, 'age', FILTER_VALIDATE_INT);
+    $born_year = filter_input(INPUT_POST, 'born_year', FILTER_VALIDATE_INT);
+    $imagePath = '';
 
     // Check if an image file is uploaded.
     if (isset($_FILES['cat_image']) && $_FILES['cat_image']['error'] === UPLOAD_ERR_OK) {
@@ -22,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Verify the image using getimagesize()
             if ($imgData = getimagesize($_FILES['cat_image']['tmp_name'])) {
                 // Generate a unique file name to avoid conflicts
-                $uploadDir = 'C:/xampp/htdocs/wd2/Project/cat-explorer-website/uploadimage/';
+                $uploadDir = 'uploadimage/';
                 $fileExtension = pathinfo($_FILES['cat_image']['name'], PATHINFO_EXTENSION);
                 $filenameToStore = uniqid("cat_", true) . '.' . $fileExtension;
                 $fullPath = $uploadDir . $filenameToStore;
@@ -30,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Move the file to the uploads directory
                 if (move_uploaded_file($_FILES['cat_image']['tmp_name'], $fullPath)) {
                     // After a successful upload, convert the server path to a URL
-                    $imagePath = 'http://localhost/wd2/Project/cat-explorer-website/uploadimage/' . $filenameToStore;
+                    $imagePath = 'uploadimage/' . $filenameToStore;
                 } else {
                     echo "Failed to upload image.";
                     exit;

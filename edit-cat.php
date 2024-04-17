@@ -9,16 +9,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['id'])) {
     $name = $_POST['name'];
     $size = $_POST['size'];
     $breed = $_POST['breed'];
-    $hair_color = $_POST['hair_color'];
+    $hair_color = $_POST['hair_color']; // This is now coming from CKEditor
     $image_url = $_POST['image_url'];
 
+    // Assume that $hair_color is sanitized appropriately before storing to the database
     // Update database
     $stmt = $conn->prepare("UPDATE cat SET name = ?, size = ?, breed = ?, hair_color = ?, image_url = ? WHERE id = ?");
     $stmt->bind_param("sssssi", $name, $size, $breed, $hair_color, $image_url, $catID);
     $stmt->execute();
 
     if ($stmt->affected_rows > 0) {
-        echo "<p>Cat updated successfully.</p>";
+        echo 'Cat ID is: ' . $catID;
+        header('Location: /wd2/Project/cat-explorer-website/cat_detail.php?id=' . $catID);
+
+        exit(); 
     } else {
         echo "<p>Failed to update cat. Please check your inputs.</p>";
     }
@@ -41,7 +45,6 @@ if ($result->num_rows === 0) {
 
 $catDetails = $result->fetch_assoc();
 $stmt->close();
-
 ?>
 
 <!DOCTYPE html>
@@ -50,6 +53,7 @@ $stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Cat - <?= htmlspecialchars($catDetails['name']) ?></title>
+    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
 </head>
 <body>
     <h1>Edit Cat Details</h1>
@@ -64,12 +68,16 @@ $stmt->close();
         <input type="text" id="breed" name="breed" value="<?= htmlspecialchars($catDetails['breed']) ?>" required><br>
 
         <label for="hair_color">Hair Color:</label>
-        <input type="text" id="hair_color" name="hair_color" value="<?= htmlspecialchars($catDetails['hair_color']) ?>" required><br>
+        <textarea id="hair_color" name="hair_color" required><?= $catDetails['hair_color'] // Here we don't escape because it's HTML ?></textarea><br>
 
         <label for="image_url">Image URL:</label>
         <input type="text" id="image_url" name="image_url" value="<?= htmlspecialchars($catDetails['image_url']) ?>" required><br>
 
         <input type="submit" value="Update Cat">
     </form>
+
+    <script>
+        CKEDITOR.replace('hair_color');
+    </script>
 </body>
 </html>

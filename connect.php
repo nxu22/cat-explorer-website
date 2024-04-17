@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 $host = 'localhost'; 
 $dbname = 'serverside';
 $user = 'serveruser';

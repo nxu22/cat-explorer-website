@@ -1,6 +1,8 @@
 <?php
-session_start();
+
 require 'connect.php'; 
+
+
 
 // Initialize a variable to store potential error messages
 $error_message = '';
@@ -10,15 +12,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email']) && isset($_PO
     $email = trim(strtolower($_POST['email'])); // Convert email to lowercase
     $password = trim($_POST['password']);
 
-    // Prepare a statement to get the user by email
-    if ($stmt = $conn->prepare("SELECT user_id, username, password_hash FROM users WHERE LOWER(email) = ?")) {
+    // Prepare a statement to get the user by email including the is_admin field
+    if ($stmt = $conn->prepare("SELECT user_id, username, password_hash, is_admin FROM users WHERE LOWER(email) = ?")) {
         $stmt->bind_param("s", $email);
 
         if ($stmt->execute()) {
             $stmt->store_result();
 
             if ($stmt->num_rows == 1) {
-                $stmt->bind_result($user_id, $username, $password_hash);
+                $stmt->bind_result($user_id, $username, $password_hash, $is_admin);
                 $stmt->fetch();
 
                 if (password_verify($password, $password_hash)) {
@@ -26,7 +28,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email']) && isset($_PO
                     $_SESSION['user_id'] = $user_id;
                     $_SESSION['username'] = $username;
                     $_SESSION['email'] = $email;
+                    $_SESSION['is_admin'] = $is_admin; // Store the admin status in session
                     $_SESSION['logged_in'] = true;
+                    
+                    // Redirect to the admin area if the user is an admin
+                    if ($is_admin == 1) {
+                        $_SESSION['admin'] = true;
+                        header('Location: admin.php');
+                       
+                        exit;
+                    }
+
+                    // Redirect to the index page if the user is not an admin
                     echo "<script>
                             alert('Sign in successful.');
                             window.location.href='index.php';

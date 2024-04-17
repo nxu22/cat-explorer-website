@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require 'connect.php';
 
 // The search term from the user

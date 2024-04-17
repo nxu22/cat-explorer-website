@@ -1,5 +1,5 @@
 <?php
-session_start();
+ 
 require 'connect.php';
 require 'authenticate.php';
 

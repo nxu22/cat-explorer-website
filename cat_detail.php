@@ -150,7 +150,7 @@ $conn->close();
                 <h2><?= htmlspecialchars($catDetails['name']) ?></h2>
                 <p><strong>Size:</strong> <?= htmlspecialchars($catDetails['size']) ?></p>
                 <p><strong>Breed:</strong> <?= htmlspecialchars($catDetails['breed']) ?></p>
-                <p><strong>Hair Color:</strong> <?= htmlspecialchars($catDetails['hair_color']) ?></p>
+                <p>Hair Color: <?= $catDetails['hair_color']; ?></p>
                 <p><strong>Age:</strong> <?= htmlspecialchars($catDetails['age']) ?> years</p>
                 <p><strong>Born Year:</strong> <?= htmlspecialchars($catDetails['born_year']) ?></p>
             <?php else: ?>
